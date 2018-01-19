@@ -1,0 +1,71 @@
+﻿@model IEnumerable<PopEyeTrip.Entities.MainBoard_List>
+
+@foreach (var m in Model)
+{
+    <li class="col-xs-12 board-item" style="background-image: url(@Url.Content(m.MainImgagePath)); list-style: none; cursor:pointer; height:100%" onclick="mainView(@m.MainBoard_DetailID)">
+        <div class="main">
+            <h1 style="margin-bottom:0px;">@m.MainTitle</h1>
+            <h3 style="margin-top:0px;margin-bottom:0px;">@m.SubTitle</h3>
+        </div>
+        <div class="sub">
+            <div class="row">
+                <div class="col-xs-5 col-sm-2">
+                    <div class="row zero-space">
+                        <div class="col-xs-4" style="padding-left:15px; padding-top:5px;">
+                            <i class="icon-popeye"></i>
+                        </div>
+                        <h4 class="col-xs-8 text-left zero-space" style="display:table; margin:0px; height:35px;">
+                            <b style="display:table-cell;vertical-align:middle"> X @m.PopEyeLike</b>
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                </div>
+                <div class="col-xs-7 col-sm-3">
+                    <div class="row zero-space">
+                        @if (@m.isFollow)
+                        {
+                            <div class="col-xs-6">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-xs-9">
+                            </div>
+                        }
+                        <div class="col-xs-3 zero-space">
+                            @if (@m.Category == "Airport")
+                            {
+                                <i class="icon-airport"></i>
+                            }
+                            else if (@m.Category == "Food")
+                            {
+                                <i class="icon-food"></i>
+                            }
+                            else if (@m.Category == "Play")
+                            {
+                                <i class="icon-play"></i>
+                            }
+                            else if (@m.Category == "Stay")
+                            {
+                                <i class="icon-stay"></i>
+                            }
+                        </div>
+                        @if (@m.isFollow)
+                        {
+                            <div class="col-xs-3 zero-space">
+                                <i class="icon-follow"></i>
+                            </div>
+                        }
+                        @*@if (@m.isMission)
+                        {
+                            <div class="col-xs-3 zero-space">
+                                <i class="icon-mission"></i>
+                            </div>
+                        }*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+}

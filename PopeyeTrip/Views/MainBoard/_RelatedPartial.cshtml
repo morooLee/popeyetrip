@@ -1,0 +1,24 @@
+﻿@model IEnumerable<PopEyeTrip.Entities.MainBoard_List>
+
+<div id="tagFrame" class="col-xs-12 zero-space">
+    @foreach (var m in Model)
+    {
+        <div class="col-xs-6 zero-space tagframe" style="background-image: url(@Url.Content(m.MainImgagePath));" onclick="anchorMain(@m.MainBoard_DetailID)">
+            <div class="main" style="padding-left: 10px;">
+                <h3 style="margin-bottom:0px;">@m.MainTitle</h3>
+                <h6 style="margin-bottom:0px;">@m.SubTitle</h6>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.ToList().Count > 0)
+{
+    <div class="row">
+        <div class="col-xs-12 zero-space">
+            <button type="button" class="btn btn-default" style="width: 100%; max-width: none; border-radius:0px;" aria-label="..." onclick="addRelated()">
+                <span class="icon-next-down center-text" aria-hidden="true" style="margin-left:auto;margin-right:auto;"></span>
+            </button>
+        </div>
+    </div>
+}

@@ -1,0 +1,144 @@
+﻿@model PopEyeTrip.Models.ExternalLoginConfirmationViewModel
+
+@{
+    ViewBag.Title = "등록";
+}
+<div class="row" style="padding-top:50px; padding-bottom:30px;">
+    <div class="col-xs-12 zero-space">
+        <i class="icon-welcome-lg width-center"></i>
+    </div>
+    <div class="col-xs-12 zero-space">
+        <i class="icon-welcome-text width-center"></i>
+    </div>
+</div>
+
+@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", data_toggle = "validator", id="externalForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ProfileImageUrl)
+    @Html.HiddenFor(m => m.UserName)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div style="margin-left:auto !important;margin-right:auto!important;width:320px; padding-bottom:30px;">
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="ExternalType">External Type</label>
+            <input type="text" id="ExternalType" name="ExternalType" value="@Model.ExternalType" class="form-control" style="cursor:default;" readonly>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.ExternalType, new { @class = "col-xs-2 control-label" })
+                @Html.TextBoxFor(m => m.ExternalType, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ExternalType, "", new { @class = "text-danger" })*@
+        </div>
+        @*<div class="form-group padding">
+            @Html.LabelFor(m => m.ProfileImageUrl, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.ProfileImageUrl, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ProfileImageUrl, "", new { @class = "text-danger" })
+        </div>*@
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="FirstName">First Name</label>
+            <input type="text" id="FirstName" name="FirstName" value="@Model.FirstName" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.FirstName, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="LastName">Last Name</label>
+            <input type="text" id="LastName" name="LastName" value="@Model.LastName" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.LastName, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })*@
+        </div>
+        @*<div class="form-group padding">
+            @Html.LabelFor(m => m.UserName, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+        </div>*@
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="Email">E-mail</label>
+            <input type="email" id="Email" name="Email" value="@Model.Email" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.Email, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            @*<label class="col-sm-4 col-xs-1 control-label" style="text-align:left" for="AgreeEmail"></label>*@
+            <input type="checkbox" id="AgreeEmail" name="AgreeEmail" checked="@Model.AgreeEmail" value="true" class="col-xs-1 checkbox" style="width:15px;margin-right:5px;">
+            <div>Do you want to receive our newsletter with this e-mail?</div>
+            <div class="help-block with-errors margin-editer"></div>
+            @*메일로 소식을 받아 보시겠습니까?
+            @Html.EditorFor(m => m.AgreeEmail, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.AgreeEmail, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="Gender">Gender</label>
+            <input type="text" id="Gender" name="Gender" value="@Model.Gender" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.Gender, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.Gender, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Gender, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="Age">Age</label>
+            <input type="text" id="Age" name="Age" value="@Model.Age" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.Age, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.Age, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="Country">Country</label>
+            <input type="text" id="Country" name="Country" value="@Model.Country" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.Country, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.Country, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Country, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="City">City</label>
+            <input type="text" id="City" name="City" value="@Model.City" class="form-control" required>
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.City, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            <label class="col-xs-4 control-label zero-space" style="text-align:left" for="PhoneNumber">Phone Number</label>
+            <input type="number" id="PhoneNumber" name="PhoneNumber" pattern="[0-9]" value="@Model.PhoneNumber" class="form-control">
+            <div class="help-block with-errors margin-editer"></div>
+            @*@Html.LabelFor(m => m.PhoneNumber, new { @class = "col-xs-2 control-label" })
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })*@
+            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group padding" style="margin:0px;">
+            @*<label class="col-sm-4 col-xs-1 control-label" style="text-align:left" for="AgreePhoneNumber"></label>*@
+            @*@Html.EditorFor(m => m.AgreePhoneNumber, new { @class = "col-xs-1 checkbox", style = "width:15px;margin-right:5px;" })*@
+            <input type="checkbox" id="AgreePhoneNumber" name="AgreePhoneNumber" checked="@Model.AgreePhoneNumber" value="true" class="col-xs-1 checkbox" style="width:15px;margin-right:5px;">
+            <div>Do you want to receive our newsletter with this phone number?</div>
+            <div class="help-block with-errors margin-editer"></div>
+            @*연락처로 소식을 받아 보시겠습니까?
+            @Html.EditorFor(m => m.AgreePhoneNumber, new { @class = "form-control" })*@
+            @*@Html.ValidationMessageFor(m => m.AgreePhoneNumber, "", new { @class = "text-danger" })*@
+        </div>
+        <div class="width-center" style="width:100px;padding-top:20px;">
+            <button type="submit" class="icon-submit submit btn"></button>
+        </div>
+    </div>
+    @*<div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="등록" />
+        </div>
+    </div>*@
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#externalForm").validator({
+            disable: true
+        });
+    });
+</script>

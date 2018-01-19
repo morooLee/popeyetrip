@@ -1,0 +1,13 @@
+﻿@model IEnumerable<PopEyeTrip.Entities.Banner>
+
+<ul class="zero-space" id="lightSlider">
+    @foreach (var m in Model)
+    {
+        if (m.ImagePath != null)
+        {
+            <li>
+                <a href="@m.LinkUrl"><img src="@Url.Content(m.ImagePath)" /></a>
+            </li>
+        }
+    }
+</ul>

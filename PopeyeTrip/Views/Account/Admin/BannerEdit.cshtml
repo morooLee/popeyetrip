@@ -1,0 +1,152 @@
+﻿@model PopEyeTrip.Entities.Banner
+
+<div class="panel panel-default">
+    @if (Model.RegisterDate == null)
+    {
+        <div class="panel-heading">
+            <h3>Slider Banner : <small style="font-size:20px;">Create</small></h3>
+        </div>
+    }
+    else
+    {
+        <div class="panel-heading">
+            <div class="row">
+                <h3 class="col-xs-6">Slider Banner : <small style="font-size:20px;">Edit</small></h3>
+                <div class="col-xs-6 panel-header-r">
+                    <div class="margin-editer text-right"><b>Register date : </b>@Model.RegisterDate</div>
+                    <div class="margin-editer text-right"><b>Writer : </b>@Model.Writer</div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form id="bannerform" action="BannerEdit" method="post" encType="multipart/form-data" data-toggle="validator" role="form">
+        <div class="panel-body">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group form-horizontal">
+                @Html.HiddenFor(m => m.ID)
+                @Html.HiddenFor(m => m.RegisterDate)
+                @Html.HiddenFor(m => m.StartDate)
+                @Html.HiddenFor(m => m.EndDate)
+                @Html.HiddenFor(m => m.Writer)
+                @Html.HiddenFor(m => m.ImagePath)
+                @*@Html.HiddenFor(m => m.LinkUrl)*@
+
+
+                @* 이미지 업로드 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Image</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Image path</label>
+                            <a class='btn btn-info' style="padding: 0px;margin-bottom:15px;">
+                                <input type="file" class="file-input" name="imagePath" id="imagePath" />
+                            </a>
+                            <span class='label label-info' id="upload-file-info"></span>
+                            <div class="help-block with-errors margin-editer"></div>
+                            @if (Model.ImagePath == null)
+                            {
+                                <div id="image_preview" style="margin-left:15px;margin-right:15px;">
+                                    <img id="image" class="img-thumbnail" src="#" onerror="$(this).css('display','none');" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div id="image_preview" style="margin-left:15px;margin-right:15px;">
+                                    <img class="img-thumbnail" src="@Url.Content(Model.ImagePath)" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                @* 링크 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Title</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label margin-editer" for="inputLink">Link</label>
+                            @*@Html.TextBoxFor(m => m.LinkUrl, new { @class = "form-control margin-editer", id = "inputLink", placeholder = "http://www.popeyetrip.com" })*@
+                            <input type="text" id="inputLink" name="LinkUrl" value="@Model.LinkUrl" class="form-control margin-editer" placeholder="http://www.popeyetrip.com" />
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+                    <label class="control-label margin-editer">Start Date</label>
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control margin-editer", placeholder = "Just Click..." })
+                    <label class="control-label margin-editer">Finish Date</label>
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control margin-editer", placeholder = "Just Click..." })
+                </div>*@
+                @if (Model.RegisterDate != null)
+                {
+                    <input type="button" class="btn btn-default navbar-right" value="Delete" onclick="bannerDel(@Model.ID)" />
+                }
+            </div>
+        </div>
+
+        <div class="panel-footer text-right">
+            <input type="button" value="Save" class="btn btn-primary" onclick="bannerAdd()" />
+            @Html.ActionLink("Cancel and return to Banner List", "Banner", null, new { @class = "btn btn-default" })
+        </div>
+    </form>
+
+    @using (Html.BeginForm("BannerDelete", "Admin", FormMethod.Post, new { @id = "bannerDel" + Model.ID }))
+    {
+        @Html.Hidden("BannerID", Model.ID)
+    }
+</div>
+
+<script type="text/javascript">
+    $('#imagePath').on('change', function () {
+        $("#upload-file-info").html($(this).val());
+        ext = $(this).val().split('.').pop().toLowerCase(); //확장자
+
+        //배열에 추출한 확장자가 존재하는지 체크
+        if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            //resetFormElement($(this)); //폼 초기화
+            alert('이미지 파일이 아닙니다! (gif, png, jpg, jpeg 만 업로드 가능)');
+        }
+        else {
+            file = $('#imagePath').prop("files")[0];
+            blobURL = window.URL.createObjectURL(file);
+            $('#image_preview img').attr('src', blobURL);
+            $('#image_preview img').css('display', 'block');
+            $('#image_preview').slideDown(); //업로드한 이미지 미리보기
+            //$(this).slideUp(); //파일 양식 감춤
+        }
+    });
+
+    $(document).ready(function () {
+        $("#bannerform").validator({
+            disable: false,
+        });
+    });
+
+    var checkUnload = true;
+    $(window).on("beforeunload", function () {
+        if (checkUnload) return "the changes you made will be lost if you leave this page";
+    });
+
+    function bannerDel(index) {
+        var check = confirm('Are you sure to delete it?');
+        if (check) {
+            checkUnload = false;
+            $('#bannerDel' + index).submit();
+        }
+    };
+
+    function bannerAdd() {
+        var check = confirm('Do you want to save it?');
+        if (check) {
+            checkUnload = false;
+            $('#bannerform').submit();
+        }
+    };
+
+    // 달력UI 사용하기
+    $(function () {
+        $("#startdate").datepicker();
+        $("#enddate").datepicker();
+    });
+</script>

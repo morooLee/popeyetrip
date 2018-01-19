@@ -1,0 +1,36 @@
+﻿@using PopEyeTrip.Models
+
+@using (Html.BeginForm("ExternalLogin", "Account", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+    <div>
+        @*<div>
+            <i class="login-bar">Login</i>
+        </div>*@
+        <a class="login-close" style="background-color:#000000; border:0px;">
+            <i class="icon-close" onclick="UnBlockInput()"></i>
+        </a>
+        <div class="padding-top-10">
+            <i class="icon-welcome width-center"></i>
+        </div>
+        <div class="text-center padding-top-10">
+            <h6>Do you want to feel real Korea? </h6>
+            Log in wirh
+        </div>
+        <div class="text-center padding-top-10">
+            <button class="btn-null" id="Facebook" name="provider" value="Facebook">
+                <i class="icon-facebook"></i>
+            </button>
+            @*<button class="btn-null" id="Weibo" name="provider" value="Weibo">
+                <i class="icon-weibo"></i>
+            </button>*@
+            <button class="btn-null" id="Google" name="provider" value="Google">
+                <i class="icon-google"></i>
+            </button>
+        </div>
+        <div class="text-center">
+            Don`t have an account yet?&nbsp;
+            <a style="font-family:Roboto;font-weight:400;font-size:14pt;cursor:pointer" onclick="BlockInput('joinsquare')">Sign up</a>
+        </div>
+    </div>
+}

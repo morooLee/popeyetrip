@@ -1,0 +1,824 @@
+﻿@model PopEyeTrip.Entities.MainBoard_Detail
+
+@{
+    ViewBag.Title = "PopEyeTrip Board Edit";
+}
+
+<div class="panel panel-default">
+    @if (Model.RegisterDate == null)
+    {
+        <div class="panel-heading">
+            <h3>PopEyeTrip Board : <small style="font-size:20px;">Create</small></h3>
+        </div>
+    }
+    else
+    {
+        <div class="panel-heading">
+            <div class="row">
+                <h3 class="col-xs-6">PopEyeTrip Board : <small style="font-size:20px;">Edit</small></h3>
+                <div class="col-xs-6 panel-header-r">
+                    <div class="margin-editer text-right"><b>Register date : </b>@Model.RegisterDate</div>
+                    <div class="margin-editer text-right"><b>Writer : </b>@Model.Writer</div>
+                </div>
+            </div>
+        </div>
+        if (Model.EditDate != null)
+        {
+            <div class="margin-editer text-right" style="color:#000000;margin-right:15px;">Last edit : @Model.EditDate</div>
+        }
+    }
+
+    @if (TempData["message"] != null)
+    {
+        <div class="alert alert-success">@TempData["message"]</div>
+    }
+
+    <form id="mainform" action="MainBoardEdit" method="post" encType="multipart/form-data" data-toggle="validator" role="form">
+        <div class="panel-body">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group form-horizontal">
+                @Html.HiddenFor(m => m.MainBoard_DetailID)
+                @Html.HiddenFor(m => m.MainImgagePath)
+                @Html.HiddenFor(m => m.PopEyeLike)
+                @Html.HiddenFor(m => m.Hits)
+                @Html.HiddenFor(m => m.RegisterDate)
+                @Html.HiddenFor(m => m.EditDate)
+                @Html.HiddenFor(m => m.Writer)
+                @Html.HiddenFor(m => m.isMission)
+
+                @* 이미지 업로드 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Image</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Image path</label>
+                            <a class='btn btn-info' style="padding: 0px;margin-bottom:15px;">
+                                <input type="file" id="mainImagePath" name="mainPath" class="file-input" style="cursor:pointer" accept="image/*" />
+                            </a>
+                            <span class='label label-info' id="mainImageInfo"></span>
+                            @if (Model.MainImgagePath == null)
+                            {
+                                <div id="imagePreview" style="margin-left:15px;margin-right:15px;">
+                                    <img id="mainImage" class="img-thumbnail" src="#" onerror="$(this).css('display','none');" />
+                                </div>
+                            }
+                            else
+                            {
+                                <img class="img-thumbnail margin-editer" src="@Url.Content(Model.MainImgagePath)" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                @* 타이틀 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Title</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label margin-editer" for="mainTitleInput">Main title</label>
+                            <input type="text" id="mainTitleInput" name="MainTitle" value="@Model.MainTitle" maxlength="28" class="form-control margin-editer" placeholder="Main Title">
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label margin-editer" for="subTitleInput">Sub title</label>
+                            <input type="text" id="subTitleInput" name="SubTitle" value="@Model.SubTitle" maxlength="37" class="form-control margin-editer" placeholder="Sub Title">
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                    </div>
+                </div>
+                @* 유투브 링크 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Youtube</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label margin-editer">URL</label>
+                            <input name="YoutubeUrl" value="@Model.YoutubeUrl" class="form-control margin-editer" placeholder="https://youtu.be/Y0HroaTfTag" />
+                        </div>
+                    </div>
+                </div>
+                @* 팝아이 포인트 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">PopEye Points</div>
+                    <div class="panel-body">
+                        <div class="form-group" id="popEyePoint">
+                            <label class="control-label label-float margin-editer min-width-140">PopEye Point</label>
+                            <div class="btn-toolbar padding-left-240" role="toolbar" aria-label="...">
+                                <div class="btn-group-xs btn-sm-padding" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" aria-label="..." onclick="pointSet('add')">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-default" aria-label="..." onclick="pointSet('del')">
+                                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            @if (Model.PopEyePoints.Count == 0)
+                            {
+                                <input type="number" id="pointIDInput1" name="PopEyePoints[0].ID" value="0" hidden />
+                                <input type="number" id="pointDetailIDInput1" name="PopEyePoints[0].MainBoard_DetailID" value="0" hidden />
+                                <input type="text" id="pointInput1" name="PopEyePoints[0].Point" maxlength="65" class="form-control margin-editer margin-bottom-10" placeholder="Popeye point content" />
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Model.PopEyePoints.Count; i++)
+                                {
+                                    <input type="number" id="pointIDInput@(i + 1)" name="PopEyePoints[@i].ID" value="@Model.PopEyePoints[@i].ID" hidden />
+                                    <input type="number" id="pointDetailIDInput@(i + 1)" name="PopEyePoints[@i].MainBoard_DetailID" value="@Model.PopEyePoints[@i].MainBoard_DetailID" hidden />
+                                    <input type="text" id="pointInput@(i + 1)" name="PopEyePoints[@i].Point" value="@Model.PopEyePoints[@i].Point" maxlength="65" class="form-control margin-editer margin-bottom-10" placeholder="Popeye point content">
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                @* 카테고리 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Category</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label margin-editer">Category</label>
+                            <div class="input-group width-dropdown">
+                                <input type="text" id="categoryInput" name="Category" value="@Model.Category" class="form-control margin-editer" style="cursor:default;" readonly placeholder="Click the dropdown button" />
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Dropdown<span class="caret"></span></button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                        <li><a class="pointer" onclick="categoryClick('Airport')">Airport</a></li>
+                                        <li><a class="pointer" onclick="categoryClick('Food')">Food</a></li>
+                                        <li><a class="pointer" onclick="categoryClick('Play')">Play</a></li>
+                                        <li><a class="pointer" onclick="categoryClick('Stay')">Stay</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* 팔로우 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Follow</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="width-check">
+                                <label class="control-label margin-editer">Follow</label>
+                                <div class="input-group">
+                                    <input type="text" id="isFollowInputText" disabled="disabled" class="form-control margin-editer" style="cursor:default;" placeholder="If this is a follow of popeyetrip, check" />
+                                    <span class="input-group-addon bg-white">
+                                        <input type="checkbox" id="isFollowInput" name="isFollow" value="" style="cursor:pointer;" aria-label="..." checked="@Model.isFollow" onclick="inputCheck(this)">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* 미션 *@
+                @*<div class="panel panel-info">
+                    <div class="panel-heading">Mission</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="width-check">
+                                <label class="control-label margin-editer">Mission</label>
+                                <div class="input-group">
+                                    <input type="text" id="isMissionInputText" disabled="disabled" class="form-control margin-editer" style="cursor:default;" placeholder="If this is a mission of popeyetrip, check" />
+                                    <span class="input-group-addon bg-white">
+                                        <input type="checkbox" id="isMissionInput" name="isMission" value="" style="cursor:pointer;" aria-label="..." checked="@Model.isMission" onclick="inputCheck(this)">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                @* 본문 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Body</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <input type="text" id="popEyeTripBodyInput" name="PopEyeTripBody" value="@Model.PopEyeTripBody" hidden />
+                            <label class="control-label margin-editer">Main Body</label>
+                            <div class="summernote margin-editer" id="bodyNote"></div>
+                        </div>
+                    </div>
+                </div>
+                @* 장소 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Place</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label margin-editer" for="placeTitleInput">Place Title</label>
+                            <input type="text" id="placeTitleInput" name="PlaceTitle" value="@Model.PlaceTitle" class="form-control margin-editer" placeholder="SeoHyun silbi" />
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label margin-editer" for="businessTypeInput">Type of business</label>
+                            <input type="text" id="businessTypeInput" name="BusinessType" value="@Model.BusinessType" class="form-control margin-editer" placeholder="Korean Pork BBQ" />
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="placeBodyInput" name="PlaceBody" value="@Model.PlaceBody" hidden />
+                            <label class="control-label margin-editer">Place Body</label>
+                            <div class="summernote margin-editer" id="placeNote"></div>
+                        </div>
+                    </div>
+                </div>
+                @* 영업시간 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Business hours</div>
+                    <div class="panel-body">
+                        @* 영업시간 히든 필드 *@
+                        <div>
+                            <input type="datetime" id="businessOpenInput" name="BusinessOpen" value="@Model.BusinessOpen" hidden />
+                            <input type="datetime" id="businessCloseInput" name="BusinessClose" value="@Model.BusinessClose" hidden />
+                            <input type="datetime" id="weekendOpenInput" name="WeekendOpen" value="@Model.WeekendOpen" hidden />
+                            <input type="datetime" id="weekendCloseInput" name="WeekendClose" value="@Model.WeekendClose" hidden />
+                            <input type="datetime" id="breakTimeStartInput" name="BreakTimeStart" value="@Model.BreakTimeStart" hidden />
+                            <input type="datetime" id="breakTimeEndInput" name="BreakTimeEnd" value="@Model.BreakTimeEnd" hidden />
+                        </div>
+                        @* 평일 영업시간 *@
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Business hours</label>
+                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="businessOpenHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="businessOpenMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <label class="control-label label-float margin-editer"> ~ </label>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="businessCloseHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="businessCloseMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                            </div>
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        @* 주말 영업시간 *@
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Weekend hours</label>
+                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="weekendOpenHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="weekendOpenMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <label class="control-label label-float margin-editer"> ~ </label>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="weekendCloseHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="weekendCloseMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                            </div>
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        @* 휴식 시간 *@
+                        <div class="form-groupe">
+                            <label class="control-label label-float min-width-140">Break time</label>
+                            <div class="btn-toolbar" role="toolbar" aria-label="...">
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="breakTimeStartHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="breakTimeStartMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <label class="control-label label-float margin-editer"> ~ </label>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <input type="number" id="breakTimeEndHour" maxlength="2" min="0" max="24" class="form-control col-xs-1 width-45 text-center" placeholder="HH" />
+                                    <label class="control-label time-float"> : </label>
+                                    <input type="number" id="breakTimeEndMinute" maxlength="2" min="0" max="60" class="form-control col-xs-1 width-45 text-center" placeholder="MM" />
+                                </div>
+                            </div>
+                            <div class="help-block with-errors margin-editer"></div>
+                        </div>
+                        @* 휴무일 또는 기타 *@
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Holiday</label>
+                            <input type="text" id="holiDayInput" name="Holiday" value="@Model.Holiday" class="form-control col-xs-3" placeholder="Direct input" />
+                        </div>
+                    </div>
+                </div>
+                @* 한국어 공부 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3" style="height:28px; padding-top:5px;">
+                                <span>Korean study</span>
+                            </div>
+                            <div class="btn-toolbar col-xs-3 text-right" style="padding-right: 0px;" role="toolbar" aria-label="...">
+                                <div class="btn-group-xs btn-sm-padding" role="group" aria-label="...">
+                                    <button type="button" class="btn btn-default" aria-label="..." onclick="studySet('add')">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-default" aria-label="..." onclick="studySet('del')">
+                                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body" id="study">
+                        @if (Model.KoreanStudies.Count == 0)
+                        {
+                            <div id="study1">
+                                <input type="number" name="KoreanStudies[0]].ID" value="0" hidden />
+                                <input type="number" name="KoreanStudies[0].MainBoard_DetailID" value="0" hidden />
+                                <div class="form-group margin-bottom-10">
+                                    <label class="control-label label-float margin-editer min-width-140">Korean1</label>
+                                    <input type="text" id="koreanInput1" name="KoreanStudies[0].Korean" class="form-control col-xs-3" placeholder="여행" />
+                                </div>
+                                <div class="form-group margin-bottom-10">
+                                    <label class="control-label label-float margin-editer min-width-140">Pronunciation1</label>
+                                    <input type="text" id="pronunciationInput1" name="KoreanStudies[0].Pronunciation" class="form-control col-xs-3" placeholder="Yeo Haeng" />
+                                </div>
+                                <div class="form-group margin-bottom-10">
+                                    <label class="control-label label-float margin-editer min-width-140">English1</label>
+                                    <input type="text" id="englishInput1" name="KoreanStudies[0].English" class="form-control col-xs-3" placeholder="Trip" />
+                                </div>
+                                <div class="form-group margin-bottom-10">
+                                    <label class="control-label label-float margin-editer min-width-140">Chinese1</label>
+                                    <input type="text" id="chineseInput1" name="KoreanStudies[0].Chinese" class="form-control col-xs-3" placeholder="游(Yóu)" />
+                                </div>
+                                <div class="form-group margin-bottom-10">
+                                    <label class="control-label label-float margin-editer min-width-140">Japanese1</label>
+                                    <input type="text" id="japaneseInput1" name="KoreanStudies[0].Japanese" class="form-control col-xs-3" placeholder="旅行(Ryokō)" />
+                                </div>
+                            </div>
+                        }
+
+                        else
+                        {
+                            for (int i = 0; i < Model.KoreanStudies.Count; i++)
+                            {
+                                <div id="study@i">
+                                    <input type="number" name="KoreanStudies[@i].ID" value="@Model.KoreanStudies[@i].ID" hidden />
+                                    <input type="number" name="KoreanStudies[@i].MainBoard_DetailID" value="@Model.KoreanStudies[@i].MainBoard_DetailID" hidden />
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label label-float margin-editer min-width-140">Korean</label>
+                                        <input type="text" id="koreanInput@(i + 1)" name="KoreanStudies[@i].Korean" value="@Model.KoreanStudies[@i].Korean" class="form-control col-xs-3" placeholder="여행" />
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label label-float margin-editer min-width-140">Pronunciation</label>
+                                        <input type="text" id="pronunciationInput@i" name="KoreanStudies[@i].Pronunciation" value="@Model.KoreanStudies[@i].Pronunciation" class="form-control col-xs-3" placeholder="Yeo Haeng" />
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label label-float margin-editer min-width-140">English</label>
+                                        <input type="text" id="englishInput@(i + 1)" name="KoreanStudies[@i].English" value="@Model.KoreanStudies[@i].English" class="form-control col-xs-3" placeholder="Trip" />
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label label-float margin-editer min-width-140">Chinese</label>
+                                        <input type="text" id="chineseInput@(i + 1)" name="KoreanStudies[@i].Chinese" value="@Model.KoreanStudies[@i].Chinese" class="form-control col-xs-3" placeholder="游(Yóu)" />
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label label-float margin-editer min-width-140">Japanese</label>
+                                        <input type="text" id="japaneseInput@(i + 1)" name="KoreanStudies[@i].Japanese" value="@Model.KoreanStudies[@i].Japanese" class="form-control col-xs-3" placeholder="旅行(Ryokō)" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                @* 가는 길 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Direction</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <input type="text" id="directionInput" name="Direction" value="@Model.Direction" hidden />
+                            <label class="control-label margin-editer">Direction</label>
+                            <div class="summernote margin-editer" id="directionNote"></div>
+                        </div>
+                        <div class="form-group margin-bottom-10">
+                            <label class="control-label label-float margin-editer min-width-140">Latitude</label>
+                            <input type="text" id="latitudeInput" name="Latitude" value="@Model.Latitude" class="form-control col-xs-3" placeholder="37.460331" />
+                        </div>
+                        <div class="form-group margin-bottom-10">
+                            <label class="control-label label-float margin-editer min-width-140">Longitude</label>
+                            <input type="text" id="longitudeInput" name="Longitude" value="@Model.Longitude" class="form-control col-xs-3" placeholder="126.440685" />
+                        </div>
+                    </div>
+                </div>
+                @* 스틸 컷 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Still cuts</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label label-float margin-editer min-width-140">Image path</label>
+                            <a id="stillCutFile" class='btn btn-info' style="padding: 0px;margin-bottom:15px;">
+                                @if (Model.StillCuts.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.StillCuts.Count; i++)
+                                    {
+                                        <input type="file" class="file-input" name="stillCutPaths" id="stillCut@(i + 1)" onchange="stillCutAdd(this)" style="display:none;" accept="image/*" />
+                                    }
+                                }
+                                <input type="file" class="file-input" name="stillCutPaths" id="stillCut@(Model.StillCuts.Count + 1)" onchange="stillCutAdd(this)" accept="image/*" />
+                            </a>
+                            <span class='label label-info' id="stillCutInfo"></span>
+                            <div class="col-xs-12">
+                                <div id="stillCutFrame" class="boxcon text-center" style="background-color:#ffffff;">
+                                    @* 스틸컷 이미지와 디스크립션이 오게될 영역 *@
+                                    @if (Model.StillCuts.Count != 0)
+                                    {
+                                        for (int i = 0; i < Model.StillCuts.Count; i++)
+                                        {
+                                            <div id="stillCutGroup@(i + 1)" class="col-xs-4 zero-space">
+                                                <input type="number" id="stillCutIDInput@(i + 1)" name="StillCuts[@i].ID" value="@Model.StillCuts[@i].ID" hidden />
+                                                <input type="number" id="stillCutDetailIDInput@(i + 1)" name="StillCuts[@i].MainBoard_DetailID" value="@Model.StillCuts[@i].MainBoard_DetailID" hidden />
+                                                <input type="text" id="stillCutPathInput@(i + 1)" name="StillCuts[@i].StillCutPath" value="@Model.StillCuts[@i].StillCutPath" hidden />
+                                                <img id="imageStillCut@(i + 1)" class="img-thumbnail" src="@Url.Content(Model.StillCuts[@i].StillCutPath)" onmouseover="imageOver(this)" onmouseout="imageOut(this)" />
+                                                <a class="addImage" style="background-color:transparent; border:0px;">
+                                                    <i class="icon-close" onclick="stillCutDel(this)"></i>
+                                                </a>
+                                                <input type="text" id="descriptionInput@(i + 1)" name="StillCuts[@i].StillCutDescription" value="@Model.StillCuts[@i].StillCutDescription" class="form-control" style="max-width:100%;" placeholder="Description" />
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* 해시 태그 *@
+                <div class="panel panel-info">
+                    <div class="panel-heading">Hash tags</div>
+                    <div class="panel-body">
+                        <div id="hashTag" class="form-group margin-bottom-10">
+                            <label class="control-label label-float margin-editer min-width-140">Tag names</label>
+                            @if (Model.HashTags.Count == 0)
+                            {
+                                <input type="text" id="hashTagsInput" value="" class="form-control col-xs-3" placeholder="#PopEyeTrip #Love..." />
+                            }
+                            else
+                            {
+                                var totalTags = "";
+                                for (int i = 0; i < Model.HashTags.Count; i++)
+                                {
+                                    totalTags += "#" + Model.HashTags[@i].TagName;
+                                }
+                                <input type="text" id="hashTagsInput" value="@totalTags" class="form-control col-xs-3" placeholder="#PopEyeTrip #Love..." />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="panel panel-info">
+                    <div class="panel-heading">Title</div>
+                    <div class="panel-body">
+                        
+                    </div>
+                </div>*@
+                @if (Model.RegisterDate != null)
+                {
+                    <div class="form-group form-horizontal"style="padding-right: 15px; padding-bottom: 15px;">
+                        <input type="button" class="btn btn-default navbar-right" value="Delete" onclick="mainDel(@Model.MainBoard_DetailID)" />
+                    </div>
+                }
+            </div>
+            <div class="panel-footer text-right">
+                <input type="button" value="Save" id="mainSubit" class="btn btn-primary" onclick="mainSubmit()" />
+                @Html.ActionLink("Cancel and return to PopEyeTrip List", "MainBoard", null, new { @class = "btn btn-default" })
+            </div>
+        </div>
+    </form>
+    @using (Html.BeginForm("MainBoardDelete", "Admin", FormMethod.Post, new { @id = "mainDel" + Model.MainBoard_DetailID }))
+    {
+        @Html.Hidden("MainBoard_DetailID", Model.MainBoard_DetailID)
+    }
+</div>
+
+<script type="text/javascript">
+    // 메인 이미지 업로드
+    $('#mainImagePath').on('change', function () {
+        $("#mainImageInfo").html($(this).val());
+        ext = $(this).val().split('.').pop().toLowerCase(); //확장자
+
+        //배열에 추출한 확장자가 존재하는지 체크
+        if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            resetFormElement($(this)); //폼 초기화
+            window.alert('이미지 파일이 아닙니다! (gif, png, jpg, jpeg 만 업로드 가능)');
+        } else {
+            file = $('#mainImagePath').prop("files")[0];
+            blobURL = window.URL.createObjectURL(file);
+            $('#imagePreview img').attr('src', blobURL);
+            $('#imagePreview img').css('display', 'block');
+            $('#imagePreview').slideDown(); //업로드한 이미지 미리보기
+            //$(this).slideUp(); //파일 양식 감춤
+        }
+    });
+    // 폼 유효성 검사
+    $(document).ready(function () {
+        $("#mainform").validator({
+            disable: false,
+        });
+    });
+    // summernote 기능
+    $(document).ready(function () {
+        $('.summernote').summernote({
+            height: 300,
+            width: 500,
+            minHeight: null,
+            maxHeight: null,
+            focus: false
+        });
+    });
+
+    //팝아이 포인트 추가
+    function pointSet(act) {
+        var volume = $('#popEyePoint').children('input[type=text]').length;
+        if (act == "add") {
+            if (volume >= 10) {
+                alert("You can't add any more");
+            }
+            else {
+                volume++;
+                $('#popEyePoint').append('<input type="number" id="pointIDInput' + volume + ' name="PopEyePoints[' + (volume - 1) + '].ID" value="0" hidden />');
+                $('#popEyePoint').append('<input type="number" id="pointDetailIDInput' + volume + ' name="PopEyePoints[' + (volume - 1) + '].MainBoard_DetailID" value="0" hidden />');
+                $('#popEyePoint').append('<input type="text" id="pointInput' + volume + '" name="PopEyePoints[' + (volume - 1) + '].Point" maxlength="65" class="form-control margin-editer margin-bottom-10" placeholder="Popeye point content">')
+            }
+        }
+        else {
+            if (volume <= 1) {
+                alert('There is nothing to be deleted');
+            }
+            else {
+                $('#pointIDInput' + volume).remove();
+                $('#pointDetailIDInput' + volume).remove();
+                $('#pointInput' + volume).remove();
+            }
+        }
+    };
+    // 한글 공부 추가
+    function studySet(act) {
+        var volume = ($('#study').children('div').length);
+        if (act == "add") {
+            if (volume >= 5) {
+                alert("You can't add any more");
+            }
+            else {
+                volume++;
+                $('#study').append('<div style="border-top:1px solid #bce8f1; padding-top:15px;" id="study' + volume + '"></div>');
+                $('#study' + volume).append('<input type="number" name="KoreanStudies[' + (volume - 1) + '].ID" value="0" hidden />');
+                $('#study' + volume).append('<input type="number" name="KoreanStudies[' + (volume - 1) + '].MainBoard_DetailID" value="0" hidden />');
+
+                for (var i = 1; i <= 5; i++) {
+                    $('#study' + volume).append('<div id="child' + volume + i + '" class="form-group margin-bottom-10"></div>');
+                    switch (i) {
+                        case 1: {
+                            $('#child' + volume + i).append('<label class="control-label label-float margin-editer min-width-140">Korean</label>');
+                            $('#child' + volume + i).append('<input type="text" id="koreanInput' + volume + '" name="KoreanStudies[' + (volume - 1) + '].Korean" value="" class="form-control col-xs-3" placeholder="여행" />');
+                            break;
+                        }
+                        case 2: {
+                            $('#child' + volume + i).append('<label class="control-label label-float margin-editer min-width-140">Pronunciation</label>');
+                            $('#child' + volume + i).append('<input type="text" id="pronunciationInput' + volume + '" name="KoreanStudies[' + (volume - 1) + '].Pronunciation" value="" class="form-control col-xs-3" placeholder="Yeo Haeng" />');
+                            break;
+                        }
+                        case 3: {
+                            $('#child' + volume + i).append('<label class="control-label label-float margin-editer min-width-140">English</label>');
+                            $('#child' + volume + i).append('<input type="text" id="englishInput' + volume + '" name="KoreanStudies[' + (volume - 1) + '].English" value="" class="form-control col-xs-3" placeholder="Trip" />');
+                            break;
+                        }
+                        case 4: {
+                            $('#child' + volume + i).append('<label class="control-label label-float margin-editer min-width-140">Chinese</label>');
+                            $('#child' + volume + i).append('<input type="text" id="chineseInput' + volume + '" name="KoreanStudies[' + (volume - 1) + '].Chinese" value="" class="form-control col-xs-3" placeholder="游(Yóu)" />');
+                            break;
+                        }
+                        case 5: {
+                            $('#child' + volume + i).append('<label class="control-label label-float margin-editer min-width-140">Japanese</label>');
+                            $('#child' + volume + i).append('<input type="text" id="japaneseInput' + volume + '" name="KoreanStudies[' + (volume - 1) + '].Japanese" value="" class="form-control col-xs-3" placeholder="旅行(Ryokō)" />');
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            if (volume == 1) {
+                alert('There is nothing to be deleted');
+            }
+            else {
+                $('#study' + volume).remove();
+            }
+        }
+    };
+
+    // 드롭다운 버튼에서 선택한 값 출력
+    function categoryClick(select) {
+        $('#categoryInput').attr('value', select);
+    };
+    // 체크박스 체크 여부 출력
+    function inputCheck(obj) {
+        if ($(obj).is(":checked")) {
+            document.getElementById(obj.id + 'Text').setAttribute('value', 'Checked!');
+            $(obj).attr('value', 'true');
+        } else {
+            document.getElementById(obj.id + 'Text').setAttribute('value', '');
+            $(obj).attr('value', 'false');
+        }
+    };
+
+    // 페이지 전환 시 알림창 출력
+    var checkUnload = true;
+    $(window).on("beforeunload", function () {
+        if (checkUnload) return "the changes you made will be lost if you leave this page";
+    });
+
+    // 페이지 로드 시 데이터 변환
+    $(document).ready(function () {
+        // 팔로우
+        if ($('#isFollowInput').is(":checked")) {
+            document.getElementById('isFollowInputText').setAttribute('value', 'Checked!');
+            $('#isFollowInput').attr('value', 'true');
+        } else {
+            document.getElementById('isFollowInputText').setAttribute('value', '');
+            $('#isFollowInput').attr('value', 'false');
+        }
+        // 미션
+        //if ($('#isMissionInput').is(":checked")) {
+        //    document.getElementById('isMissionInputText').setAttribute('value', 'Checked!');
+        //    $('#isMissionInput').attr('value', 'true');
+        //} else {
+        //    document.getElementById('isMissionInputText').setAttribute('value', '');
+        //    $('#isMissionInput').attr('value', 'false');
+        //}
+        // summerNote
+        $('#bodyNote').code("");
+        if ($('#popEyeTripBodyInput').val() != null) {
+            $('#bodyNote').code($('#popEyeTripBodyInput').val());
+        }
+        $('#placeNote').code("");
+        if ($('#placeBodyInput').val() != null) {
+            $('#placeNote').code($('#placeBodyInput').val());
+        }
+        $('#directionNote').code("");
+        if ($('#directionInput').val() != null) {
+            $('#directionNote').code($('#directionInput').val());
+        }
+        // 평일 영업시간
+        if ($('#businessOpenInput').val() != null) {
+            $('#businessOpenHour').val($('#businessOpenInput').val().split(':')[0]);
+            $('#businessOpenMinute').val($('#businessOpenInput').val().split(':')[1]);
+        }
+        if ($('#businessCloseInput').val() != null) {
+            $('#businessCloseHour').val($('#businessCloseInput').val().split(':')[0]);
+            $('#businessCloseMinute').val($('#businessCloseInput').val().split(':')[1]);
+        }
+        // 주말 영업시간
+        if ($('#weekendOpenInput').val() != null) {
+            $('#weekendOpenHour').val($('#weekendOpenInput').val().split(':')[0]);
+            $('#weekendOpenMinute').val($('#weekendOpenInput').val().split(':')[1]);
+        }
+        if ($('#weekendCloseInput').val() != null) {
+            $('#weekendCloseHour').val($('#weekendCloseInput').val().split(':')[0]);
+            $('#weekendCloseMinute').val($('#weekendCloseInput').val().split(':')[1]);
+        }
+        // 휴식시간 삽입
+        if ($('#breakTimeStartInput').val() != null) {
+            $('#breakTimeStartHour').val($('#breakTimeStartInput').val().split(':')[0]);
+            $('#breakTimeStartMinute').val($('#breakTimeStartInput').val().split(':')[1]);
+        }
+        if ($('#breakTimeEndInput').val() != null) {
+            $('#breakTimeEndHour').val($('#breakTimeEndInput').val().split(':')[0]);
+            $('#breakTimeEndMinute').val($('#breakTimeEndInput').val().split(':')[1]);
+        }
+    });
+    // 서브미트
+    function mainSubmit() {
+        var check = confirm('Do you want to save it?');
+        if (check) {
+            checkUnload = false;
+            // summer Note 
+            $('#popEyeTripBodyInput').val($('#bodyNote').code());
+            $('#placeBodyInput').val($('#placeNote').code());
+            $('#directionInput').val($('#directionNote').code());
+            // 팔로우
+            if ($('#isFollowInput').is(":checked")) {
+                $('#isFollowInput').attr('value', 'true');
+            } else {
+                $('#isFollowInput').attr('value', 'false');
+            }
+            // 미션
+            //if ($('#isMissionInput').is(":checked")) {
+            //    $('#isMissionInput').attr('value', 'true');
+            //} else {
+            //    $('#isMissionInput').attr('value', 'false');
+            //}
+            // 평일 영업시간 삽입
+            if ($('#businessOpenHour').val() != "") {
+                $('#businessOpenInput').val($('#businessOpenHour').val() + ':' + $('#businessOpenMinute').val());
+            }
+            if ($('#businessCloseHour').val() != "") {
+                $('#businessCloseInput').val($('#businessCloseHour').val() + ':' + $('#businessCloseMinute').val());
+            }
+            // 주말 영업시간 삽입
+            if ($('#weekendOpenHour').val() != "") {
+                $('#weekendOpenInput').val($('#weekendOpenHour').val() + ':' + $('#weekendOpenMinute').val());
+            }
+            if ($('#weekendCloseHour').val() != "") {
+                $('#weekendCloseInput').val($('#weekendCloseHour').val() + ':' + $('#weekendCloseMinute').val());
+            }
+            // 휴식시간 삽입
+            if ($('#breakTimeStartHour').val() != "") {
+                $('#breakTimeStartInput').val($('#breakTimeStartHour').val() + ':' + $('#breakTimeStartMinute').val());
+            }
+            if ($('#breakTimeEndHour').val() != "") {
+                $('#breakTimeEndInput').val($('#breakTimeEndHour').val() + ':' + $('#breakTimeEndMinute').val());
+            }
+            // 해쉬태그
+            if ($('#hashTagsInput').val() != null)
+            {
+                var tag = $('#hashTagsInput').val().split('#');
+
+                for (var i = 1; i < tag.length; i++) {
+                    $('#hashTag').append('<input type="number" id="hashTagsIDInput' + i + '" name="HashTags[' + (i - 1) + '].ID" value="0" Hidden />')
+                    $('#hashTag').append('<input type="number" id="hashTagsDetailIDInput' + i + '" name="HashTags[' + (i - 1) + '].MainBoard_DetailID" value="0" Hidden "/>')
+                    $('#hashTag').append('<input type="text" id="hashTagsInput' + i + '" name="HashTags[' + (i - 1) + '].TagName" value="' + tag[i] + '" Hidden />')
+                }
+            }
+
+            $('#mainform').submit();
+        }
+    };
+    // 삭제
+    function mainDel(index) {
+        var check = confirm('Are you sure to delete it?');
+        if (check) {
+            checkUnload = false;
+            $('#mainDel' + index).submit();
+        }
+    }
+
+    // 이미지 업로드
+    function stillCutAdd(obj) {
+        $("#stillCutInfo").html($(obj).val());
+        ext = $(obj).val().split('.').pop().toLowerCase(); //확장자
+
+        //배열에 추출한 확장자가 존재하는지 체크
+        if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            resetFormElement($(obj)); //폼 초기화
+            alert('이미지 파일이 아닙니다! (gif, png, jpg, jpeg 만 업로드 가능)');
+        }
+        else {
+            var volume = $('#stillCutFrame').find('img').length;
+            volume++;
+
+            $('#stillCutFrame').append('<div id="stillCutGroup' + volume + '" class="col-xs-4 zero-space"></div>');
+            $('#stillCutGroup' + volume).append('<input type="number" id="stillCutIDInput' + volume + '" name="StillCuts[' + (volume - 1) + '].ID" value="0" hidden />');
+            $('#stillCutGroup' + volume).append('<input type="number" id="stillCutDetailIDInput' + volume + '" name="StillCuts[' + (volume - 1) + '].MainBoard_DetailID" value="0" hidden />');
+            $('#stillCutGroup' + volume).append('<input type="text" id="stillCutPathInput' + volume + '" name="StillCuts[' + (volume - 1) + '].StillCutPath" value="" hidden />');
+            $('#stillCutGroup' + volume).append('<img id="imageStillCut' + volume + '" class="img-thumbnail" src="#" onmouseover="imageOver(this)" onmouseout="imageOut(this)" />');
+            $('#stillCutGroup' + volume).append('<a class="addImage" style="background-color:transparent; border:0px;"><i class="icon-close" onclick="stillCutDel(this)"></i></a>');
+            $('#stillCutGroup' + volume).append('<input type="text" id="descriptionInput' + volume + '" name="StillCuts[' + (volume - 1) + '].StillCutDescription" class="form-control" style="max-width:100%;"  placeholder="Description"/>');
+            
+            file = $('#stillCut' + volume).prop("files")[0];
+            blobURL = window.URL.createObjectURL(file);
+            $('#stillCutGroup' + volume + ' img').attr('src', blobURL);
+            $('#stillCutGroup' + volume + ' img').css('display', 'block');
+            $('#stillCutGroup' + volume + ' img').slideDown(); //업로드한 이미지 미리보기
+
+            $(obj).css('display', 'none');
+            $('#stillCutFile').append('<input type="file" class="file-input" name="stillCutPaths" id="stillCut' + (volume + 1) + '" style="cursor:pointer" onchange="stillCutAdd(this)" accept="image/*" />');
+            //$(this).slideUp(); //파일 양식 감춤
+        }
+    };
+
+    // 스틸컷 삭제
+    function stillCutDel(obj) {
+        var image = $(obj).parent().prev();
+        var index = $(image).attr('ID').charAt($(image).attr('ID').length - 1);
+
+        var check = confirm('Are you sure to delete it?');
+        if (check) {
+            var volume = $('#stillCutFrame').find('img').length;
+            $('#stillCutGroup' + index).remove();
+
+            if ($('#stillCutFile').find('#stillCut' + index).length > 0)
+            {
+                $('#stillCut' + index).remove();
+            }
+
+            for (var i = 1; i <= volume; i++) {
+                if (index < i) {
+                    $('#stillCut' + i).attr('id', 'stillCut' + (i - 1))
+                    $('#stillCutGroup' + i).attr('id', 'stillCutGroup' + (i - 1))
+                    $('#stillCutIDInput' + i).attr('name', 'StillCuts[' + (i - 2) + '].ID')
+                    $('#stillCutIDInput' + i).attr('id', 'stillCutIDInput' + (i - 1))
+                    $('#stillCutDetailIDInput' + i).attr('name', 'StillCuts[' + (i - 2) + '].MainBoard_DetailID')
+                    $('#stillCutDetailIDInput' + i).attr('id', 'stillCutDetailIDInput' + (i - 1))
+                    $('#stillCutPathInput' + i).attr('name', 'StillCuts[' + (i - 2) + '].StillCutPath')
+                    $('#stillCutPathInput' + i).attr('id', 'stillCutPathInput' + (i - 1))
+                    $('#imageStillCut' + i).attr('id', 'imageStillCut' + (i - 1))
+                    $('#descriptionInput' + i).attr('name', 'StillCuts[' + (i - 2) + '].StillCutDescription')
+                    $('#descriptionInput' + i).attr('id', 'descriptionInput' + (i - 1))
+                }
+            }
+            $('#stillCut' + (volume + 1)).attr('id', 'stillCut' + volume)
+        }
+    };
+    // 스틸컷 마우스 오버 이벤트 처리
+    function imageOver(obj) {
+        $(obj).css('opacity', '0.5')
+    };
+    // 스틸컷 마우스 아웃 이벤트 처리
+    function imageOut(obj) {
+        $(obj).css('opacity', '1')
+    };
+</script>

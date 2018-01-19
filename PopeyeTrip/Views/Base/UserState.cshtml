@@ -1,0 +1,31 @@
+﻿@model PopEyeTrip.Models.ApplicationUser
+
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+        var ProFileImageUrl = @ViewBag.ProfileImageUrl;
+        <ul class="nav navbar-nav navbar-right">
+            <li style="padding-left:15px;">
+                <img src=@ViewBag.ProfileImageUrl alt="Profile Image" class="img-circle" height="40">
+            </li>
+            <li>
+                @Html.ActionLink(User.Identity.Name, "ChangeUserInfo", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Logoff</a></li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            <a name="loginLink" id="loginLink" onclick="BlockInput('joinsquare')" style="font-size:14px;">Join</a>
+        </li>
+        <li>
+            <a name="loginLink" id="loginLink" onclick="BlockInput('loginsquare')" style="font-size:14px;">Login</a>
+        </li>
+    </ul>
+}

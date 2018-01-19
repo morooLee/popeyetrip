@@ -1,0 +1,442 @@
+﻿@model PopEyeTrip.Models.MainBoardViewModel
+
+@{
+    ViewBag.Title = "MainBoardView";
+}
+
+@* 타이틀 *@
+<div class="title row">
+    <div class="title-main col-xs-9">
+        <h1 style="margin:0px;">@Model.MainBoardDetail.MainTitle</h1>
+        <h3 style="margin: 0px;">@Model.MainBoardDetail.SubTitle</h3>
+    </div>
+    <div class="col-xs-3" style="height:initial;">
+        <div class="row" >
+            <div class="col-xs-4" style="padding-left:30px; padding-top:19px;">
+                <i class="icon-popeye"></i>
+            </div>
+            <h4 class="col-xs-8" style="padding-top:22px; padding-left:10px; margin:0px;"><b> X 9999</b></h4>
+        </div>
+    </div>
+</div>
+@* 유튜브 링크 *@
+@if (Model.MainBoardDetail.YoutubeUrl != null)
+{
+    <iframe id="youtube" src="https://www.youtube.com/embed/@Model.YoutubeUrl?&autoplay=1" frameborder="0" allowfullscreen></iframe>
+}
+@* 공유하기 영역 *@
+<div class="row">
+    <div class="col-xs-4" style="height:100%;">
+        <p class="main-body" style="color:#fcfbf7; padding-top:6px;">@Model.MainBoardDetail.Hits Views</p>
+    </div>
+    <div class="col-xs-8 text-right zero-space">
+        <button class="btn-null" id="FacebookShare" >
+            <i class="icon-facebook"></i>
+        </button>
+        <button class="btn-null" id="WeiboShare" >
+            <i class="icon-weibo"></i>
+        </button>
+        <button class="btn-null" id="GoogleShare" >
+            <i class="icon-google"></i>
+        </button>
+        <button class="btn-null" id="TweeterShare" >
+            <i class="icon-tweeter"></i>
+        </button>
+    </div>
+</div>
+
+<div class="row padding" style="background-color:#fcfbf7;">
+    @* 팝아이 포인트 영역 *@
+    <div class="row padding">
+        <br />
+        <div class="main-title">POPEYE Point</div>
+            @if (Model.MainBoardDetail.PopEyePoints.Count > 1)
+            {
+                <ul class="padding">
+                    @for (int i = 0; i < Model.MainBoardDetail.PopEyePoints.Count; i++)
+                    {
+                        <li class="main-body">@Model.MainBoardDetail.PopEyePoints[@i].Point</li>
+                    }
+                </ul>
+            }
+        <br />
+    </div>
+    @* 플레이스 영역 *@
+    <div class="row padding">
+        <div class="main-title">PLACE&emsp;
+            @if (Model.MainBoardDetail.PlaceTitle != null)
+            {
+                <b style="color:#000000;">&ldquo;@Model.MainBoardDetail.PlaceTitle&rdquo;</b>
+            }
+        </div>
+        <div class="main-body"><b>@Model.MainBoardDetail.BusinessType</b></div>
+        <div class="main-body">@MvcHtmlString.Create(Model.MainBoardDetail.PlaceBody)</div>
+    </div>
+    <br />
+    @* 영업시간 영역 *@
+    @if(Model.MainBoardDetail.BusinessOpen != null && Model.MainBoardDetail.WeekendOpen != null)
+    {
+        <div class="row padding">
+        <div class="main-title">HOUR</div>
+        @if (Model.MainBoardDetail.BusinessOpen != null)
+        {
+            <div class="row">
+                <div class="col-xs-2 main-body">Weekdays</div>
+                <div class="col-xs-10 main-body">
+                    @if (Model.MainBoardDetail.BusinessOpen != null)
+                    {
+                        <b>@Model.MainBoardDetail.BusinessOpen &ensp;~&ensp;@Model.MainBoardDetail.BusinessClose</b>
+                    }
+                </div>
+            </div>
+        }
+        @if (Model.MainBoardDetail.WeekendOpen != null)
+        {
+            <div class="row">
+                <div class="col-xs-2 main-body">Weekends</div>
+                <div class="col-xs-10 main-body">
+                    @if (Model.MainBoardDetail.WeekendOpen != null)
+                    {
+                        <b>@Model.MainBoardDetail.WeekendOpen &ensp;~&ensp;@Model.MainBoardDetail.WeekendClose</b>
+                    }
+                </div>
+            </div>
+        }
+        @if (Model.MainBoardDetail.BreakTimeStart != null)
+        {
+            <div class="row">
+                <div class="col-xs-2 main-body">Braektime</div>
+                <div class="col-xs-10 main-body">
+                    @if (Model.MainBoardDetail.BreakTimeStart != null)
+                    {
+                        <b>@Model.MainBoardDetail.BreakTimeStart &ensp;~&ensp;@Model.MainBoardDetail.BreakTimeEnd</b>
+                    }
+                </div>
+            </div>
+        }
+        @if (Model.MainBoardDetail.Holiday != null)
+        {
+            <div class="row">
+                <div class="col-xs-2 main-body">Holiday</div>
+                <div class="col-xs-10 main-body">
+                    @if (Model.MainBoardDetail.Holiday != null)
+                    {
+                        <b>@Model.MainBoardDetail.Holiday</b>
+                    }
+                </div>
+            </div>
+        }
+        <br />
+    </div>
+    }
+    
+    @* 한국어 공부 영역 *@
+    @if (Model.MainBoardDetail.KoreanStudies[0].Korean != null)
+    {
+        <div class="row padding" style="background-color:#dbf0f0;">
+            <div class="main-title" style="color:#117073;">USEFUL KOREAN</div>
+            @for (int i = 0; i < Model.MainBoardDetail.KoreanStudies.Count; i++)
+            {
+                <div class="main-body"><b>#0@(i + 1)</b></div>
+                <div class="row">
+                    <div class="col-xs-2 main-body">Korean</div>
+                    <div class="col-xs-10 main-body"><b>@Model.MainBoardDetail.KoreanStudies[@i].Korean</b></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 main-body">Pronunce</div>
+                    <div class="col-xs-10 main-body"><b>@Model.MainBoardDetail.KoreanStudies[@i].Pronunciation</b></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 main-body">English</div>
+                    <div class="col-xs-10 main-body">@Model.MainBoardDetail.KoreanStudies[@i].English</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 main-body">Chinese</div>
+                    <div class="col-xs-10 main-body">@Model.MainBoardDetail.KoreanStudies[@i].Chinese</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2 main-body">Japanese</div>
+                    <div class="col-xs-10 main-body">@Model.MainBoardDetail.KoreanStudies[@i].Japanese</div>
+                </div>
+            }
+        </div>
+        <br />
+    }
+    @* 디스크립션 영역 *@
+    <div>
+        <p class="main-title">DESCRIPTION</p>
+        <div class="main-body">@MvcHtmlString.Create(Model.MainBoardDetail.PopEyeTripBody)</div>
+    </div>
+    <br />
+</div>
+@* 스틸컷 영역 *@
+<div class="row" style="background-color:#fcfbf7;">
+    <div class="padding">
+        <p class="main-title">STILLS</p>
+    </div>
+    @for (int i = 0; i < Model.MainBoardDetail.StillCuts.Count; i++)
+    {
+        <div id="caption@(i + 1)" style="display:none">
+            <p>@Model.MainBoardDetail.StillCuts[@i].StillCutDescription</p>
+        </div>
+    }
+    <div id="captions" class="col-xs-12 zero-space">
+        @for (int i = 0; i < Model.MainBoardDetail.StillCuts.Count; i++)
+        {
+            <a class="" href="@Url.Content(@Model.MainBoardDetail.StillCuts[@i].StillCutPath)" data-sub-html="#caption@(i+1)">
+                <img src="@Url.Content(@Model.MainBoardDetail.StillCuts[@i].StillCutPath)" class="col-xs-3 zero-space" style="border: 1px solid #fcfbf7;" />
+            </a>
+        }
+    </div>
+</div>
+@* 구글맵 영역 *@
+<div class="row" style="background-color:#fcfbf7;">
+    <br />
+    <div class="padding">
+        <p class="main-title">HOW TO GET HERE</p>
+        <div class="main-body">@MvcHtmlString.Create(Model.MainBoardDetail.Direction)</div>
+    </div>
+    <input type="text" id="latitude" value="@Model.MainBoardDetail.Latitude" hidden />
+    <input type="text" id="longitude" value="@Model.MainBoardDetail.Longitude" hidden />
+    <input type="text" id="placeTitle" value="@Model.MainBoardDetail.PlaceTitle" hidden />
+    
+    <div id="travel" class="row margin" style="width:210px;background-color:#fcfbf7;margin:0px;padding:0px;">
+        <div class="col-xs-4" style="padding-right:0px;">
+            <label class="control-label" style="background-color:#fcfbf7; color:#fcfbf7; padding-top:5px; margin-bottom:0px; line-height:1;">Mode of Travel</label>
+        </div>
+        <div class="col-xs-8 zero-space" style="padding-bottom:3px;padding-right:3px;">
+            <div class="input-group">
+                <input type="text" id="travelInput" class="form-control" style="cursor:default" aria-label="..." value="Transit" readonly>
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a style="cursor:pointer;" id="Transit" onclick="travelMode(this.id)">Transit</a></li>
+                        <li><a style="cursor:pointer;" id="Walking" onclick="travelMode(this.id)">Walking</a></li>
+                        <li><a style="cursor:pointer;" id="Driving" onclick="travelMode(this.id)">Driving</a></li>
+                        <li><a style="cursor:pointer;" id="Bicycling" onclick="travelMode(this.id)">Bicycling</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* 구글맵이 보여질 영역 *@
+    <div id="map" style="width:320px; margin-left:auto;margin-right:auto;">
+
+    </div>
+    <div class="row" style="width:640px; margin-left:auto;margin-right:auto;">
+        <div class="input-group">
+            <input type="text" id="placeInput" class="form-control" style="max-width:none; border-radius: 0;" placeholder="Navigation at Input place" />
+            <span class="input-group-btn">
+                <button type="button" id="inputLocation" class="btn btn-default" aria-label="Right Align">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+                <input type="button" id="myLocation" class="btn btn-default" value="Navigation at my location" />
+                <input type="button" id="placeLocation" class="btn btn-info" style="border-radius: 0;" value="Move to place" />
+            </span>
+        </div>
+    </div>
+    <br />
+</div>
+@* 관련 게시판이 보여질 영역 *@
+<div class="row" style="background-color:#fcfbf7;">
+    <div class="padding">
+        <p class="main-title">RELATED</p>
+    </div>
+    <div id="tagFrame" class="col-xs-12 zero-space">
+        @for (int i = 0; i < Model.MainBoardLists.Count; i++)
+        {
+            <div class="col-xs-6 zero-space tagframe" style="background-image: url(@Url.Content(Model.MainBoardLists[@i].MainImgagePath));" onclick="anchorMain(@Model.MainBoardLists[@i].MainBoard_DetailID)">
+                <div class="main" style="padding-left: 10px;">
+                    <h3 style="margin-bottom:0px;">@Model.MainBoardLists[@i].MainTitle</h3>
+                    <h6 style="margin-bottom:0px;">@Model.MainBoardLists[@i].SubTitle</h6>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@* 관련 게시글 추가로 출력하기 버튼 *@
+<div class="row">
+    <div class="col-xs-12 zero-space">
+        @if (Model.MainBoardLists.Count > 0)
+        {
+            <button type="button" class="btn btn-default" style="width: 100%; max-width: none; border-radius:0px;" aria-label="..." onclick="addRelated()">
+                <span class="icon-next-down center-text" aria-hidden="true" style="margin-left:auto;margin-right:auto;"></span>
+            </button>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.popLoading({
+            existBackground: false,
+            textPosition: 'down'
+        });
+        // 사이즈 조절
+        $('#youtube').attr('width', $('#body').width());
+        $('#youtube').attr('height', ($('#body').width() * 0.5625));
+        $('#map').css('height', ($('#map').width() * 0.5625));
+        $('#tagFrame').children('div').css('height', $('#tagFrame').children('div').width() * 0.5625);
+
+        $('#captions').imagesLoaded()
+        .always(function (instance) {
+            $('#captions').lightGallery({
+                backdropDuration: 150,
+                thumbnail: true,
+                animateThumb: true,
+                showThumbByDefault: true
+            });
+            $.hideLoading();
+        });
+    });
+    // 사이즈 조절
+    window.onresize = (function () {
+        $('#youtube').attr('width', $('#body').width());
+        $('#youtube').attr('height', ($('#body').width() * 0.5625));
+        $('#map').css('height', ($('#map').width() * 0.5625));
+        $('#tagFrame').children('div').css('height', $('#tagFrame').children('div').width() * 0.5625);
+    });
+    // 구글맵
+    function initmap() {
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var Lat = parseFloat($('#latitude').val());
+        var Lng = parseFloat($('#longitude').val());
+        var placeLatLng = { lat: Lat, lng: Lng };
+        var originLatLng = { lat: 0.0, lng: 0.0 };
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 17,
+            center: placeLatLng
+        });
+
+        var marker = new google.maps.Marker({
+            position: placeLatLng,
+            map: map,
+            title: $('#placeTitle').val()
+        });
+
+        var input = document.getElementById('placeInput');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(travel);
+        $('#travel').css('display', 'none');
+
+        directionsDisplay.setMap(map);
+
+        $('#myLocation').on('click', function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    $('#travel').css('display', 'block');
+                    originLatLng = { lat: position.coords.latitude, lng: position.coords.longitude };
+                    destinationLatLng = placeLatLng;
+                    calculateAndDisplayRoute(directionsService, directionsDisplay, originLatLng, destinationLatLng);
+                }, function () {
+                    handleLocationError(true);
+                });
+            } else {
+                handleLocationError(false);
+            }
+        });
+        $('#inputLocation').on('click', function () {
+            $('#travel').css('display', 'block');
+            originLatLng = $('#placeInput').val();
+            destinationLatLng = placeLatLng;
+            calculateAndDisplayRoute(directionsService, directionsDisplay, originLatLng, destinationLatLng);
+        });
+        $('#placeLocation').on('click', function () {
+            map.setCenter(placeLatLng);
+            map.setZoom(17);
+        });
+        $('#travelInput').on('change', function () {
+            destinationLatLng = placeLatLng;
+            calculateAndDisplayRoute(directionsService, directionsDisplay, originLatLng, destinationLatLng);
+        });
+
+        searchBox.addListener('places_changed', function () {
+            var places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function (place) {
+                var icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                $('#inputLocation').trigger('click');
+            });
+        });
+    }
+    // 구글맵 오류 출력
+    function calculateAndDisplayRoute(directionsService, directionsDisplay, originLatLng, destinationLatLng) {
+        var selectedMode = $('#travelInput').val().toUpperCase();
+        directionsService.route({
+            origin: originLatLng,
+            destination: destinationLatLng,
+            travelMode: google.maps.TravelMode[selectedMode]
+        }, function (response, status) {
+            if (status === google.maps.DirectionsStatus.OK) {
+                directionsDisplay.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status + 'Nonavailabe. Please use otehr ways');
+            }
+        });
+    }
+    // 지오로케이션 오류 출력
+    function handleLocationError(browserHasGeolocation) {
+        alert(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+    }
+    // 구글맵 길찾기 방식
+    function travelMode(id) {
+        if(id == 'Transit')
+        {
+            $('#travelInput').attr('value', 'Transit');
+            $('#travelInput').trigger('change');
+        }
+        else if (id == 'Walking') {
+            $('#travelInput').attr('value', 'Walking');
+            $('#travelInput').trigger('change');
+        }
+        else if (id == 'Driving') {
+            $('#travelInput').attr('value', 'Driving');
+            $('#travelInput').trigger('change');
+        }
+        else if (id == 'Bicycling') {
+            $('#travelInput').attr('value', 'Bicycling');
+            $('#travelInput').trigger('change');
+        }
+    }
+    // 관련 게시글로 이동
+    function anchorMain(index) {
+        window.location.href = '/Home/MainBoardView?MainBoard_DetailID=' + index;
+    }
+
+    function addRelated() {
+        if (isPageLoad) {
+            $.popLoading({
+                existBackground: false,
+                textPosition: 'down'
+            });
+            $.ajax({
+                url: '/Home/MainBoardView',
+                data: { page: pageNo },
+                success: function (data) {
+                    $("#tagFrame").append(data);
+                    pageNo++;
+                    $.hideLoading();
+                    if ($.trim(data) != '') {
+                        isPageLoad = false;
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANJbZv1XEeZgzc55It7kdDC6UBOC6Xzrc&signed_in=true&libraries=places&callback=initmap" async defer></script>
